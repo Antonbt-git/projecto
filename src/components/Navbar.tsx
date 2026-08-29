@@ -5,7 +5,7 @@ function Navbar() {
   return (
     <header className="navbar">
       <div className="container navbar-content">
-        <h1 className="logo">Mi Proyecto <span>Python</span></h1>
+        <h1 className="logo">ON <span>EMPRESAS</span></h1>
 
         <nav>
           <NavLink to="/">Inicio</NavLink>
@@ -15,8 +15,8 @@ function Navbar() {
         </nav>
 
         <Link to="/login" className="btn-login">
-            Login
-          </Link>
+          Login
+        </Link>
 
       </div>
     </header>
