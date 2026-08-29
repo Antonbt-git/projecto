@@ -1,4 +1,5 @@
 import { NavLink, Link } from "react-router-dom";
+import NavThemeToggle from "./NavThemeToggle";
 
 function Navbar() {
 
@@ -13,6 +14,8 @@ function Navbar() {
           <NavLink to="/servicios">Servicios</NavLink>
           <NavLink to="/contacto">Contacto</NavLink>
         </nav>
+
+        <NavThemeToggle />
 
         <Link to="/login" className="btn-login">
           Login

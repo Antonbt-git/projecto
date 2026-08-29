@@ -86,14 +86,12 @@ function Home() {
           <span className="home-eyebrow">Proyecto React + TypeScript</span>
 
           <h1>
-            De tu CSV a un <em>DataFrame</em>, y de ahí a un <em>ndarray</em>
-            {" "}— directo en el navegador
+            INTERNET PARA <em>EMPRESAS</em> SERVICIOS <em>DE +</em>
+            {" "} CIBERSEGURIDAD Y CLOUD
           </h1>
 
           <p>
-            Un laboratorio de datos que imita los flujos de trabajo de Pandas y NumPy,
-            y suma modelos de Machine Learning para imagen, audio y postura corporal.
-            Sin instalar Python, sin backend: todo corre aquí mismo.
+            Conéctate a una red robusta y estable, con seguridad avanzada o despliega servicios en la nube con latencia menor a 2ms.
           </p>
 
           <div className="home-hero-actions">

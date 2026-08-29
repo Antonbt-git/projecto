@@ -17,6 +17,35 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
+/* 0b. Tema oscuro global — se activa con [data-theme="dark"] en <html> */
+:root[data-theme="dark"] {
+  --paper: #141416;
+  --paper-warm: #0a0a0b;
+  --ink: #ffffff;
+  --ink-soft: #a7a7ad;
+  --accent: #ff5a1f;
+  --accent-deep: #ff8a4c;
+  --accent-wash: rgba(255, 90, 31, 0.14);
+  --red: #f87171;
+  --red-deep: #ef4444;
+  --red-wash: rgba(239, 68, 68, 0.14);
+  --hairline: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme="dark"] body {
+  background: var(--paper-warm);
+}
+
+:root[data-theme="dark"] .navbar-content {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="dark"] .home,
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .white-box {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
 /* 1. */
 body {
   font-family: var(--font-body);
@@ -324,6 +353,43 @@ nav a.active {
   background: var(--accent-deep);
   color: #ffffff !important;
   transform: translateY(-2px);
+}
+
+/* 12b. Botón global de tema claro/oscuro (Navbar) */
+.nav-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: var(--paper-warm);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.nav-theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+.nav-theme-toggle svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+@media (max-width: 640px) {
+  .nav-theme-toggle span.label {
+    display: none;
+  }
 }
 
 /* 13. */
