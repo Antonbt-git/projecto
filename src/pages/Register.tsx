@@ -1,108 +1,113 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import FaceCamera from "../components/FaceCamera";
 
-function Register(): React.ReactElement {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const navigate = useNavigate();
+function Register() {
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [descriptor, setDescriptor] = useState<number[] | null>(null);
+    const [error, setError] = useState("");
 
-    if (!email || !password) {
-      setError("Todos los campos son obligatorios.");
-      return;
+    const navigate = useNavigate();
+
+    const register = async () => {
+
+    if (!name || !email || !password) {
+        setError("Completa todos los campos");
+        return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem("registered_users") || "[]");
-
-    const userExists = existingUsers.some((u: { email?: string }) => u.email === email);
-    if (userExists) {
-      setError("Ese usuario o correo ya está registrado.");
-      return;
+    if (!descriptor || descriptor.length !== 128) {
+        setError("Primero debes registrar correctamente tu rostro");
+        return;
     }
 
-    existingUsers.push({ email, password });
-    localStorage.setItem("registered_users", JSON.stringify(existingUsers));
+    try {
 
-    setSuccess("¡Registro exitoso! Redirigiendo al login...");
-    setTimeout(() => {
-      navigate("/login");
-    }, 1500);
-  };
+        await axios.post(
+            "http://localhost:4000/api/auth/register",
+            {
+                name,
+                email,
+                password,
+                faceDescriptor: descriptor
+            }
+        );
 
-  return (
-    <section className="page auth-shell">
-      <div className="auth-card">
-        <div className="auth-header">
-          <span className="auth-badge">Crear cuenta</span>
-          <h2 className="auth-title">Registro</h2>
-          <p className="auth-subtitle">Crea una cuenta para acceder al dashboard</p>
+        localStorage.setItem("verifyEmail", email);
+
+        navigate("/verify");
+
+    } catch (error: any) {
+
+        console.error(error);
+
+        setError(
+            error.response?.data?.message ||
+            "Error registrando usuario"
+        );
+    }
+};
+
+    return (
+        <div className="auth-container">
+
+            <div className="auth-card">
+
+                <h1>Crear cuenta</h1>
+
+                <p className="subtitle">
+                    Registra tus datos y tu rostro
+                </p>
+
+                {error && (
+                    <div className="error">
+                        {error}
+                    </div>
+                )}
+
+                <input
+                    placeholder="Nombre completo"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                />
+
+                <input
+                    type="email"
+                    placeholder="Correo electrónico"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                />
+
+                <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                />
+
+                <FaceCamera
+                    onDetected={setDescriptor}
+                />
+
+                <button onClick={register}>
+                    Crear cuenta
+                </button>
+
+                <p>
+                    ¿Ya tienes cuenta?
+                    <Link to="/">
+                        {" "}Iniciar sesión
+                    </Link>
+                </p>
+
+            </div>
+
         </div>
-
-        {error && (
-          <div className="auth-message is-error">
-            <span className="auth-message-icon">!</span>
-            <span>{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="auth-message is-success">
-            <span>{success}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleRegister} className="auth-form">
-          <div className="auth-input-group">
-            <label className="auth-label">Correo electrónico</label>
-            <input
-              type="text"
-              placeholder="tu_usuario@correo.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="auth-input"
-            />
-          </div>
-
-          <div className="auth-input-group">
-            <label className="auth-label">Contraseña</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="auth-input"
-            />
-          </div>
-
-          <button type="submit" className="auth-submit">
-            Crear cuenta
-            <span>→</span>
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          <p className="auth-footer-text">
-            ¿Ya tienes cuenta?{" "}
-            <Link to="/login" className="auth-link">
-              Inicia sesión
-            </Link>
-          </p>
-        </div>
-
-        <button className="auth-back" onClick={() => navigate(-1)}>
-          ← Regresar
-        </button>
-      </div>
-    </section>
-  );
+    );
 }
 
 export default Register;

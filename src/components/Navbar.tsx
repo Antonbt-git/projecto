@@ -17,8 +17,8 @@ function Navbar() {
 
         <NavThemeToggle />
 
-        <Link to="/login" className="btn-login">
-          Login
+        <Link to="/Login" className="btn-login">
+          Iniciar sesión
         </Link>
 
       </div>
