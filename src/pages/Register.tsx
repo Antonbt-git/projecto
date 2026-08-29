@@ -10,99 +10,169 @@ function Register() {
     const [password, setPassword] = useState("");
     const [descriptor, setDescriptor] = useState<number[] | null>(null);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
-    const register = async () => {
+    const register = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-    if (!name || !email || !password) {
-        setError("Completa todos los campos");
-        return;
-    }
+        if (loading) return;
 
-    if (!descriptor || descriptor.length !== 128) {
-        setError("Primero debes registrar correctamente tu rostro");
-        return;
-    }
+        if (!name || !email || !password) {
+            setError("Completa todos los campos");
+            return;
+        }
 
-    try {
+        if (!descriptor || descriptor.length !== 128) {
+            setError("Primero debes registrar correctamente tu rostro");
+            return;
+        }
 
-        await axios.post(
-            "http://localhost:4000/api/auth/register",
-            {
-                name,
-                email,
-                password,
-                faceDescriptor: descriptor
-            }
-        );
+        setError("");
+        setLoading(true);
 
-        localStorage.setItem("verifyEmail", email);
+        try {
 
-        navigate("/verify");
+            await axios.post(
+                "http://localhost:4000/api/auth/register",
+                {
+                    name,
+                    email,
+                    password,
+                    faceDescriptor: descriptor
+                }
+            );
 
-    } catch (error: any) {
+            localStorage.setItem("verifyEmail", email);
 
-        console.error(error);
+            navigate("/verify");
 
-        setError(
-            error.response?.data?.message ||
-            "Error registrando usuario"
-        );
-    }
-};
+        } catch (error: any) {
+
+            console.error(error);
+
+            setError(
+                error.response?.data?.message ||
+                "Error registrando usuario"
+            );
+
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <div className="auth-container">
+        <div className="auth-shell">
 
             <div className="auth-card">
 
-                <h1>Crear cuenta</h1>
+                <div className="auth-header">
+                    <div className="auth-logo">👤</div>
 
-                <p className="subtitle">
-                    Registra tus datos y tu rostro
-                </p>
+                    <div className="auth-badge">NUEVA CUENTA</div>
+
+                    <h1 className="auth-title">Crear cuenta</h1>
+
+                    <p className="auth-subtitle">
+                        Registra tus datos y verifica tu rostro
+                    </p>
+                </div>
 
                 {error && (
-                    <div className="error">
-                        {error}
+                    <div className="auth-message is-error">
+                        <span className="auth-message-icon">!</span>
+                        <span>{error}</span>
                     </div>
                 )}
 
-                <input
-                    placeholder="Nombre completo"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                />
+                {descriptor && !error && (
+                    <div className="auth-message is-success">
+                        <span className="auth-message-icon">✓</span>
+                        <span>Rostro registrado correctamente</span>
+                    </div>
+                )}
 
-                <input
-                    type="email"
-                    placeholder="Correo electrónico"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                />
+                <form className="auth-form" onSubmit={register}>
 
-                <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                />
+                    <div className="auth-input-group">
+                        <label className="auth-label" htmlFor="register-name">
+                            Nombre completo
+                        </label>
 
-                <FaceCamera
-                    onDetected={setDescriptor}
-                />
+                        <input
+                            id="register-name"
+                            className="auth-input"
+                            placeholder="Tu nombre y apellido"
+                            autoComplete="name"
+                            required
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
+                    </div>
 
-                <button onClick={register}>
-                    Crear cuenta
-                </button>
+                    <div className="auth-input-group">
+                        <label className="auth-label" htmlFor="register-email">
+                            Correo electrónico
+                        </label>
 
-                <p>
-                    ¿Ya tienes cuenta?
-                    <Link to="/">
-                        {" "}Iniciar sesión
-                    </Link>
-                </p>
+                        <input
+                            id="register-email"
+                            className="auth-input"
+                            type="email"
+                            placeholder="tucorreo@ejemplo.com"
+                            autoComplete="email"
+                            required
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="auth-input-group">
+                        <label className="auth-label" htmlFor="register-password">
+                            Contraseña
+                        </label>
+
+                        <input
+                            id="register-password"
+                            className="auth-input"
+                            type="password"
+                            placeholder="••••••••"
+                            autoComplete="new-password"
+                            required
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="auth-input-group">
+                        <label className="auth-label">
+                            Verificación facial
+                        </label>
+
+                        <FaceCamera
+                            onDetected={setDescriptor}
+                        />
+                    </div>
+
+                    <button
+                        className="auth-submit"
+                        type="submit"
+                        disabled={loading}
+                    >
+                        {loading ? "Creando cuenta..." : "Crear cuenta"}
+                    </button>
+
+                </form>
+
+                <div className="auth-footer">
+                    <p className="auth-footer-text">
+                        ¿Ya tienes cuenta?{" "}
+                        <Link className="auth-link" to="/">
+                            Iniciar sesión
+                        </Link>
+                    </p>
+                </div>
 
             </div>
 
